@@ -1,6 +1,8 @@
 # 2024Ethernet_TCU_WSB
 telemetry system and Ethernet connection for TCU and WSB designed in 2024
+
 UWFE Online Telemetry System V1 Quick Start -- May 25, 2024
+
 Author: Andrew Yu
 
 This document will guide you to set up the Telemetry System and GUI on your laptop, and trouble shooting.
@@ -15,7 +17,9 @@ make sure the NUC is powered and able to work.
 
 1)	Connect the TCU with the router by an ethernet cable (free to use any port LAN1 or LAN2), insert the SIM card to the router SIM 1 slot, connect the antenna to “cellular 1” port, then connect the power adapter to the router to start it. It will take a few minutes to connect to the cellular network.
 
-  
+  <img width="196" alt="image" src="https://github.com/AndrewYuzm/2024Ethernet_TCU_WSB/assets/118711557/ad9014f8-9003-4440-aab5-7ebaccc26534">
+<img width="196" alt="image" src="https://github.com/AndrewYuzm/2024Ethernet_TCU_WSB/assets/118711557/cb446120-8715-4b14-8a38-25fc9b659e3a">
+
 Figure 1.1 switch on the top, router on the bottom
 Figure 1.2 GUI and connections
 
@@ -44,4 +48,4 @@ Do everything start from 2.1) to test if it’s working
 Use another ethernet cable to connect the router to your PC, following the sticker on the router to access the manage page, to check the internet connection.
 
 to be updated...
-![image](https://github.com/AndrewYuzm/2024Ethernet_TCU_WSB/assets/118711557/51491d32-1798-4230-ac20-15a80878d052)
+
