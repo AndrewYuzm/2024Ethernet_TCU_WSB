@@ -1,7 +1,7 @@
 # 2024Ethernet_TCU_WSB
 telemetry system and Ethernet connection for TCU and WSB designed in 2024
 UWFE Online Telemetry System V1 Quick Start -- May 25, 2024
-Authors: Andrew Yu, Addison Chen
+Author: Andrew Yu
 
 This document will guide you to set up the Telemetry System and GUI on your laptop, and trouble shooting.
 
