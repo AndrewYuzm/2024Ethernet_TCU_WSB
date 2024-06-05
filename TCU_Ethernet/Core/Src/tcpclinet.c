@@ -1,3 +1,16 @@
+/*
+ * Author: 	Andrew Yu
+ * Note: 	this contains some helper functions for TCP Ethernet and Internet communications,
+ * 			defined ways to collect data, create TCP - socket connections to destination server
+ * 			ip address, send data packages to server, and receive data from the server.
+ * 			Should be noticed that some redundant functions exist.
+ * date:	20240604
+ *
+ * update:
+ *
+ */
+
+
 #include "lwip/netif.h"
 #include "lwip/ip.h"
 #include "lwip/tcp.h"
@@ -15,11 +28,11 @@
 
 #include "cmsis_os.h"
 
-#define SERVER_IP "208.68.36.87" // bay服务器IP地址
-//#define SERVER_IP "192.168.2.19" // 本地
-//#define SERVER_IP "192.168.2.89" // 本地PC
-//#define SERVER_IP "192.168.56.1" // 本地
-#define SERVER_PORT 2333         // 服务器端口号
+#define SERVER_IP "208.68.36.87" // bay服务器IP地址 - Owen's Server IP add, is set to forward to bay NUC, port 2333
+//#define SERVER_IP "192.168.2.19" // 本地 - Andrew's local PC address
+//#define SERVER_IP "192.168.2.89" // 本地PC - Andrew's local PC address
+//#define SERVER_IP "192.168.56.1" // 本地 - Andrew's local PC address
+#define SERVER_PORT 2333         // 服务器端口号 - Server port number
 
 int create_tcp_client(void) {
     int sock;
@@ -186,7 +199,7 @@ void send_json_data(struct tcp_pcb *tpcb, const char *json_data) {
 
 ////collect data
 
-#define MAX_DATA 30  // 最大数据项数
+#define MAX_DATA 50  // 最大数据项数
 //typedef struct {
 //    int id;
 //    int data;

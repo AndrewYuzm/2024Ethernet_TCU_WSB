@@ -1,3 +1,15 @@
+/*
+ * Author: 	Andrew Yu
+ * Note: 	this contains some helper functions for TCP Ethernet and Internet communications,
+ * 			defined ways to collect data, create TCP - socket connections to destination server
+ * 			ip address, send data pakeages to server, and receive data from the server.
+ * date:	20240604
+ *
+ * update:
+ *
+ */
+
+
 #ifndef _TCPCLIENT_H_
 #define _TCPCLIENT_H_
 
