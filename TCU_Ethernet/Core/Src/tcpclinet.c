@@ -230,7 +230,7 @@ void add_or_update_data(int id, char data[]) {
         if (dataItems[i].id == id) {  // 找到相同ID，更新数据
         	 strncpy(dataItems[i].data, data, sizeof(dataItems[i].data) - 1);
         	 dataItems[i].data[sizeof(dataItems[i].data) - 1] = '\0'; // 确保字符串以null结尾
-            sprintf(dataItems[i].str, ",0x%08X%s\n", id, data);
+            sprintf(dataItems[i].str, ",%08lXx%08X%s\n", xTaskGetTickCount(), id, data);
 //            xSemaphoreGive(dataMutex);
             return;
         }
@@ -243,7 +243,7 @@ void add_or_update_data(int id, char data[]) {
         dataItems[emptyIndex].id = id;
    	 strncpy(dataItems[emptyIndex].data, data, sizeof(dataItems[emptyIndex].data) - 1);
    	 dataItems[emptyIndex].data[sizeof(dataItems[emptyIndex].data) - 1] = '\0'; // 确保字符串以null结尾
-        sprintf(dataItems[emptyIndex].str, ",0x%08X%s\n", id, data);
+        sprintf(dataItems[emptyIndex].str, ",%08lXx%08X%s\n", xTaskGetTickCount(), id, data);
     }
 
 //    xSemaphoreGive(dataMutex);
