@@ -34,31 +34,70 @@
 //#define SERVER_IP "192.168.56.1" // 本地 - Andrew's local PC address
 #define SERVER_PORT 2333         // 服务器端口号 - Server port number
 
+//int create_tcp_client(void) {
+//    int sock;
+//    struct sockaddr_in server_address;
+//
+//    // 创建socket
+//    sock = lwip_socket(AF_INET, SOCK_STREAM, 0);
+//    if (sock < 0) {
+//    	printf("soc create error...\n\r");
+//        return -1; // Socket创建失败
+//    }
+//
+//    // 设置服务器地址
+//    server_address.sin_family = AF_INET;
+//    server_address.sin_port = htons(SERVER_PORT);
+//    inet_aton(SERVER_IP, &server_address.sin_addr.s_addr);
+//
+//    // 连接服务器
+//    if (lwip_connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+//        lwip_close(sock);
+//    	printf("connect error...\n\r");
+//        return -2; // 连接失败
+//    }
+//
+//    return sock; // 返回socket描述符
+//}
+
+//	Reconnection logic added
 int create_tcp_client(void) {
     int sock;
     struct sockaddr_in server_address;
+    int retry_count = 0;
+    const int max_retries = 5;  // 设置最大重试次数
+    const int retry_delay = 2000;  // 每次重试之间的延时，单位：毫秒
 
-    // 创建socket
-    sock = lwip_socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) {
-    	printf("soc create error...\n\r");
-        return -1; // Socket创建失败
+    while (retry_count < max_retries) {
+        // 创建socket
+        sock = lwip_socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0) {
+            printf("soc create error...\n\r");
+            return -1; // Socket创建失败
+        }
+
+        // 设置服务器地址
+        server_address.sin_family = AF_INET;
+        server_address.sin_port = htons(SERVER_PORT);
+        inet_aton(SERVER_IP, &server_address.sin_addr.s_addr);
+
+        // 连接服务器
+        if (lwip_connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+            lwip_close(sock);
+            printf("connect error, retrying...\n\r");
+            retry_count++;
+            osDelay(retry_delay);  // 延时后再重试
+        } else {
+            printf("Connected to server successfully after %d retries.\n\r",retry_count);
+            return sock; // 成功连接，返回socket描述符
+        }
     }
 
-    // 设置服务器地址
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(SERVER_PORT);
-    inet_aton(SERVER_IP, &server_address.sin_addr.s_addr);
-
-    // 连接服务器
-    if (lwip_connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
-        lwip_close(sock);
-    	printf("connect error...\n\r");
-        return -2; // 连接失败
-    }
-
-    return sock; // 返回socket描述符
+    printf("Failed to connect after max %d retries.\n\r", max_retries);
+    return -2; // 多次重试后连接失败
 }
+
+
 void tcp_client_send(int sock, const char *data) {
 	err_t err;
     err = lwip_send(sock, data, strlen(data), 0);
