@@ -29,25 +29,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  12 .ARM.attributes 00000030  00000000  00000000  0001e08c  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0003107f  00000000  00000000  0001e0bc  2**0
+ 13 .debug_info   00031008  00000000  00000000  0001e0bc  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00007b91  00000000  00000000  0004f13b  2**0
+ 14 .debug_abbrev 00007b88  00000000  00000000  0004f0c4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00002100  00000000  00000000  00056cd0  2**3
+ 15 .debug_aranges 00002100  00000000  00000000  00056c50  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00001a48  00000000  00000000  00058dd0  2**0
+ 16 .debug_rnglists 00001a48  00000000  00000000  00058d50  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00034201  00000000  00000000  0005a818  2**0
+ 17 .debug_macro  00034201  00000000  00000000  0005a798  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   00036e3d  00000000  00000000  0008ea19  2**0
+ 18 .debug_line   00036e3d  00000000  00000000  0008e999  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000ef10d  00000000  00000000  000c5856  2**0
+ 19 .debug_str    000ef10d  00000000  00000000  000c57d6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000043  00000000  00000000  001b4963  2**0
+ 20 .comment      00000043  00000000  00000000  001b48e3  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  00009104  00000000  00000000  001b49a8  2**2
+ 21 .debug_frame  00009104  00000000  00000000  001b4928  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 0000006d  00000000  00000000  001bdaac  2**0
+ 22 .debug_line_str 0000006d  00000000  00000000  001bda2c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1379,8 +1379,8 @@ void StartDefaultTask(void const * argument)
  8000b88:	2100      	movs	r1, #0
  8000b8a:	f8d7 0098 	ldr.w	r0, [r7, #152]	@ 0x98
  8000b8e:	f016 f947 	bl	8016e20 <memset>
-  const uint8_t logging_line_len = 34;
- 8000b92:	2322      	movs	r3, #34	@ 0x22
+  const uint8_t logging_line_len = 35;//with comma
+ 8000b92:	2323      	movs	r3, #35	@ 0x23
  8000b94:	f887 3097 	strb.w	r3, [r7, #151]	@ 0x97
     /* Infinite loop */
 
@@ -1404,7 +1404,7 @@ void StartDefaultTask(void const * argument)
  8000bb8:	2b01      	cmp	r3, #1
  8000bba:	d142      	bne.n	8000c42 <StartDefaultTask+0x246>
         {
-          sprintf(&buffer[loop*logging_line_len], "%08lXx%08lX%02X%02X%02X%02X%02X%02X%02X%02X\n", xTaskGetTickCount(), rxMsg.id, rxMsg.data[0], rxMsg.data[1], rxMsg.data[2], rxMsg.data[3], rxMsg.data[4], rxMsg.data[5], rxMsg.data[6], rxMsg.data[7]);
+          sprintf(&buffer[loop*logging_line_len], ",%08lXx%08lX%02X%02X%02X%02X%02X%02X%02X%02X\n", xTaskGetTickCount(), rxMsg.id, rxMsg.data[0], rxMsg.data[1], rxMsg.data[2], rxMsg.data[3], rxMsg.data[4], rxMsg.data[5], rxMsg.data[6], rxMsg.data[7]);
  8000bbc:	f8b7 30aa 	ldrh.w	r3, [r7, #170]	@ 0xaa
  8000bc0:	f897 2097 	ldrb.w	r2, [r7, #151]	@ 0x97
  8000bc4:	fb02 f303 	mul.w	r3, r2, r3
@@ -2088,8 +2088,8 @@ int create_tcp_client(void) {
     int retry_count = 0;
  8001142:	2300      	movs	r3, #0
  8001144:	61fb      	str	r3, [r7, #28]
-    const int max_retries = 5;  // 设置最大重试次数
- 8001146:	2305      	movs	r3, #5
+    const int max_retries = 200;  // 设置最大重试次数
+ 8001146:	23c8      	movs	r3, #200	@ 0xc8
  8001148:	61bb      	str	r3, [r7, #24]
     const int retry_delay = 2000;  // 每次重试之间的延时，单位：毫秒
  800114a:	f44f 63fa 	mov.w	r3, #2000	@ 0x7d0
@@ -2152,10 +2152,10 @@ int create_tcp_client(void) {
  80011aa:	69fb      	ldr	r3, [r7, #28]
  80011ac:	3301      	adds	r3, #1
  80011ae:	61fb      	str	r3, [r7, #28]
-            osDelay(retry_delay);  // 延时后再重试
- 80011b0:	697b      	ldr	r3, [r7, #20]
- 80011b2:	4618      	mov	r0, r3
- 80011b4:	f004 fc42 	bl	8005a3c <osDelay>
+//            osDelay(retry_delay);  // 延时后再重试
+            vTaskDelay(pdMS_TO_TICKS(500));
+ 80011b0:	f44f 70fa 	mov.w	r0, #500	@ 0x1f4
+ 80011b4:	f006 f90c 	bl	80073d0 <vTaskDelay>
  80011b8:	e005      	b.n	80011c6 <create_tcp_client+0x8a>
         } else {
             printf("Connected to server successfully after %d retries.\n\r",retry_count);
