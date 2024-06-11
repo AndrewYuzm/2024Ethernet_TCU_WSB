@@ -282,25 +282,7 @@ int main(void)
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
   configCANFilters(&hcan1);
-  if (HAL_CAN_Start(&hcan1) != HAL_OK) {
-         uint8_t msg[] = "Failed to start CAN!\n";
-         HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
-     return HAL_ERROR;
-   }
 
-   if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
-   {
-         uint8_t msg[] = "Error starting to listen for CAN msgs from FIFO0\n";
-         HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
-       return HAL_ERROR;
-   }
-
-   if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK)
-   {
-         uint8_t msg[] = "Error starting to listen for CAN msgs from FIFO0\n";
-         HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
-       return HAL_ERROR;
-   }
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -499,16 +481,38 @@ void StartDefaultTask(void const * argument)
   CanMsgQueue = xQueueCreate(4000, sizeof(CanMsg)); // Good to 72%
   if( CanMsgQueue == NULL )
   {
-	  while(1)
-	  {
+//	  while(1)
+//	  {
 		  uint8_t msg[] = "Failed to create CAN queue\r\n";
 		  HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
 		  vTaskDelay(pdMS_TO_TICKS(1000));
-	  }
+		  HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
+//	  }
   }
   printf("Create TCP client\r\n");
   //  vTaskDelay(pdMS_TO_TICKS(1000)); // maybe the init is not finished yet
   int soctemp=create_tcp_client(); //$
+
+  // Enable CAN reception after successful socket connection
+  printf("enabling CAN reception\r\n");
+  if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+	  uint8_t msg[] = "Failed to start CAN!\n";
+	  HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
+	  return;
+  }
+
+  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+	  uint8_t msg[] = "Error starting to listen for CAN msgs from FIFO0\n";
+	  HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
+	  return;
+  }
+
+  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK) {
+	  uint8_t msg[] = "Error starting to listen for CAN msgs from FIFO1\n";
+	  HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
+	  return;
+  }
+
   CanMsg rxMsg;
   const uint16_t buffSize = 3000;
   uint8_t buffer[buffSize];

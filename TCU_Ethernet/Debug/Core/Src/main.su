@@ -3,10 +3,10 @@
 ../Core/Src/main.c:153:6:configCANFilters	56	static
 ../Core/Src/main.c:190:6:HAL_CAN_RxFifo0MsgPendingCallback	104	static
 ../Core/Src/main.c:232:6:HAL_CAN_RxFifo1MsgPendingCallback	104	static
-../Core/Src/main.c:257:5:main	120	static
-../Core/Src/main.c:350:6:SystemClock_Config	88	static
-../Core/Src/main.c:396:13:MX_CAN1_Init	8	static
-../Core/Src/main.c:433:13:MX_USART1_UART_Init	8	static
-../Core/Src/main.c:466:13:MX_GPIO_Init	32	static
-../Core/Src/main.c:490:6:StartDefaultTask	160	dynamic
-../Core/Src/main.c:555:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:257:5:main	48	static
+../Core/Src/main.c:332:6:SystemClock_Config	88	static
+../Core/Src/main.c:378:13:MX_CAN1_Init	8	static
+../Core/Src/main.c:415:13:MX_USART1_UART_Init	8	static
+../Core/Src/main.c:448:13:MX_GPIO_Init	32	static
+../Core/Src/main.c:472:6:StartDefaultTask	248	dynamic
+../Core/Src/main.c:557:6:Error_Handler	4	static,ignoring_inline_asm
