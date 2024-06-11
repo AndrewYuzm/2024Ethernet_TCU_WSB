@@ -517,7 +517,7 @@ void StartDefaultTask(void const * argument)
   const uint16_t buffSize = 3000;
   uint8_t buffer[buffSize];
   memset(buffer, 0, buffSize*sizeof(uint8_t));
-  const uint8_t logging_line_len = 34;
+  const uint8_t logging_line_len = 35;//with comma
     /* Infinite loop */
 
     while(1) {
@@ -526,7 +526,7 @@ void StartDefaultTask(void const * argument)
       {
         if (xQueueReceive(CanMsgQueue, &rxMsg, 100) == pdTRUE)
         {
-          sprintf(&buffer[loop*logging_line_len], "%08lXx%08lX%02X%02X%02X%02X%02X%02X%02X%02X\n", xTaskGetTickCount(), rxMsg.id, rxMsg.data[0], rxMsg.data[1], rxMsg.data[2], rxMsg.data[3], rxMsg.data[4], rxMsg.data[5], rxMsg.data[6], rxMsg.data[7]);
+          sprintf(&buffer[loop*logging_line_len], ",%08lXx%08lX%02X%02X%02X%02X%02X%02X%02X%02X\n", xTaskGetTickCount(), rxMsg.id, rxMsg.data[0], rxMsg.data[1], rxMsg.data[2], rxMsg.data[3], rxMsg.data[4], rxMsg.data[5], rxMsg.data[6], rxMsg.data[7]);
           fifo1--;
           bufferFilled += logging_line_len;
         }
