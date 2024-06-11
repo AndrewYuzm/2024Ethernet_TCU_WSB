@@ -65,7 +65,7 @@ int create_tcp_client(void) {
     int sock;
     struct sockaddr_in server_address;
     int retry_count = 0;
-    const int max_retries = 5;  // 设置最大重试次数
+    const int max_retries = 50;  // 设置最大重试次数
     const int retry_delay = 2000;  // 每次重试之间的延时，单位：毫秒
 
     while (retry_count < max_retries) {
@@ -86,7 +86,7 @@ int create_tcp_client(void) {
             lwip_close(sock);
             printf("connect error, retrying...\n\r");
             retry_count++;
-            osDelay(retry_delay);  // 延时后再重试
+            osDelay(500);  // 延时后再重试
         } else {
             printf("Connected to server successfully after %d retries.\n\r",retry_count);
             return sock; // 成功连接，返回socket描述符
