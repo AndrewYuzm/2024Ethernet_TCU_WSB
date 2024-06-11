@@ -174,8 +174,17 @@ void configCANFilters(CAN_HandleTypeDef* canHandle){	//Without filtered any CAN 
         Error_Handler();
     }
 }
+TickType_t failed = 0;
+uint32_t failedNum = 0;
 
-uint16_t fifo0=0,fifo1=0;
+xQueueHandle CanMsgQueue;
+typedef struct {
+	uint32_t id;
+	uint8_t data[8];
+} CanMsg;
+CanMsg fifoTmp;
+volatile int32_t fifo0 = 0;
+volatile int32_t fifo1 = 0;
 char globalmsg[128];	//transfer msgs to string
 int msg_len;
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
@@ -186,12 +195,18 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
     if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK)
     {
-    	msg_len = snprintf(globalmsg, sizeof(globalmsg),
-    	    				   "%02X%02X%02X%02X%02X%02X%02X%02X",
-    	    				   RxData[0], RxData[1], RxData[2], RxData[3],
-    	    				   RxData[4], RxData[5], RxData[6], RxData[7]);
-
-    	add_or_update_data(RxHeader.ExtId, globalmsg);
+    	fifo0++;
+    	fifo1++;
+      fifoTmp.id = RxHeader.ExtId;
+      memcpy(fifoTmp.data, RxData, 8*sizeof(uint8_t));
+      if (xQueueSendToBackFromISR(CanMsgQueue, &fifoTmp, NULL) != pdTRUE)
+      {
+        if (failed == 0)
+        {
+          failed = xTaskGetTickCountFromISR();
+          failedNum =fifo0;
+        }
+      }
     }
     else {
         uint8_t msg[] = "Failed to receive CAN message from FIFO0\n";
@@ -306,7 +321,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 1024);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityRealtime, 0, 2048);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -474,38 +489,63 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
 {
+	printf("LWIP");
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
   //  TCP_Client_Init();
-    int soctemp=create_tcp_client(); //$
-  //  double t=0,y=0;
-    int t=0,y=0;
-    uint8_t send_buf[1550];
-  //  uint8_t send_buf[30];
-    void init_dataItems();
+	printf("Creating Q\r\n");
+	//  vTaskDelay(pdMS_TO_TICKS(3000));
+  CanMsgQueue = xQueueCreate(4000, sizeof(CanMsg)); // Good to 72%
+  if( CanMsgQueue == NULL )
+  {
+	  while(1)
+	  {
+		  uint8_t msg[] = "Failed to create CAN queue\r\n";
+		  HAL_UART_Transmit(&huart1, msg, sizeof(msg), 100);
+		  vTaskDelay(pdMS_TO_TICKS(1000));
+	  }
+  }
+  printf("Create TCP client\r\n");
+  //  vTaskDelay(pdMS_TO_TICKS(1000)); // maybe the init is not finished yet
+  int soctemp=create_tcp_client(); //$
+  CanMsg rxMsg;
+  const uint16_t buffSize = 3000;
+  uint8_t buffer[buffSize];
+  memset(buffer, 0, buffSize*sizeof(uint8_t));
+  const uint8_t logging_line_len = 34;
     /* Infinite loop */
 
-    for(;;){
-    	printf("CAN: 0:%u,1:%u\r\n",fifo0,fifo1);
-    	tcp_client_send(soctemp, get_all_data_str());
+    while(1) {
+      uint32_t bufferFilled = 0U;
+      for (uint16_t loop = 0; loop < buffSize/logging_line_len; loop++)
+      {
+        if (xQueueReceive(CanMsgQueue, &rxMsg, 100) == pdTRUE)
+        {
+          sprintf(&buffer[loop*logging_line_len], "%08lXx%08lX%02X%02X%02X%02X%02X%02X%02X%02X\n", xTaskGetTickCount(), rxMsg.id, rxMsg.data[0], rxMsg.data[1], rxMsg.data[2], rxMsg.data[3], rxMsg.data[4], rxMsg.data[5], rxMsg.data[6], rxMsg.data[7]);
+          fifo1--;
+          bufferFilled += logging_line_len;
+        }
+        else
+        {
+          printf("Q Empty\n");
+          break;
+        }
+      }
+      if (bufferFilled != 0)
+      {
+    	  tcp_client_send(soctemp, buffer, bufferFilled);
+      }
+      if (failed != 0)
+      {
+        printf("failed: %lu %lu\r\n", failed, failedNum);
+      }
+      printf("can: %ld %ld\r\n", fifo0, fifo1);
+
     	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-    	osDelay(500);
     }
-
-    //use this to send one single message
-//	sprintf(send_buf,",0x000000010000000000000004\n");
-//	tcp_client_send(soctemp, send_buf);
-
-    //a quick test for collect datas
-//	add_or_update_data(1,4);add_or_update_data(2,8);add_or_update_data(3,12);add_or_update_data(4,4);
-//	tcp_client_send(soctemp, get_all_data_str());
-//	osDelay(200);
-//	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-
   /* USER CODE END 5 */
 }
-
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

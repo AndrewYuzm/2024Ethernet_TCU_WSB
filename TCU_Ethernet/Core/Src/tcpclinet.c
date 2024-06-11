@@ -60,7 +60,6 @@
 //    return sock; // 返回socket描述符
 //}
 
-//	Reconnection logic added
 int create_tcp_client(void) {
     int sock;
     struct sockaddr_in server_address;
@@ -97,8 +96,7 @@ int create_tcp_client(void) {
     return -2; // 多次重试后连接失败
 }
 
-
-void tcp_client_send(int sock, const char *data) {
+void tcp_client_send(int sock, const uint8_t *data, const uint32_t dataLen) {
 	err_t err;
     err = lwip_send(sock, data, strlen(data), 0);
 	if (err == ERR_OK) {
@@ -269,7 +267,7 @@ void add_or_update_data(int id, char data[]) {
         if (dataItems[i].id == id) {  // 找到相同ID，更新数据
         	 strncpy(dataItems[i].data, data, sizeof(dataItems[i].data) - 1);
         	 dataItems[i].data[sizeof(dataItems[i].data) - 1] = '\0'; // 确保字符串以null结尾
-            sprintf(dataItems[i].str, ",%08lXx%08X%s\n", xTaskGetTickCount(), id, data);
+        	 sprintf(dataItems[i].str, ",%08lXx%08X%s\n", xTaskGetTickCount(), id, data);
 //            xSemaphoreGive(dataMutex);
             return;
         }
@@ -282,7 +280,7 @@ void add_or_update_data(int id, char data[]) {
         dataItems[emptyIndex].id = id;
    	 strncpy(dataItems[emptyIndex].data, data, sizeof(dataItems[emptyIndex].data) - 1);
    	 dataItems[emptyIndex].data[sizeof(dataItems[emptyIndex].data) - 1] = '\0'; // 确保字符串以null结尾
-        sprintf(dataItems[emptyIndex].str, ",%08lXx%08X%s\n", xTaskGetTickCount(), id, data);
+   	 	 sprintf(dataItems[emptyIndex].str, ",%08lXx%08X%s\n", xTaskGetTickCount(), id, data);
     }
 
 //    xSemaphoreGive(dataMutex);

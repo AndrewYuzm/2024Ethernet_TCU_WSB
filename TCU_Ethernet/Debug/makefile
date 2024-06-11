@@ -75,8 +75,8 @@ all: main-build
 main-build: TCU_EthernetTest.elf secondary-outputs
 
 # Tool invocations
-TCU_EthernetTest.elf TCU_EthernetTest.map: $(OBJS) $(USER_OBJS) /Users/andrewyu/Desktop/文档/UWFE/2024Ethernet_TCU_WSB/TCU_Ethernet/STM32F417VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TCU_EthernetTest.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/andrewyu/Desktop/文档/UWFE/2024Ethernet_TCU_WSB/TCU_Ethernet/STM32F417VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TCU_EthernetTest.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TCU_EthernetTest.elf TCU_EthernetTest.map: $(OBJS) $(USER_OBJS) C:\Users\Jacky\ Lim\Downloads\2024Ethernet_TCU_WSB\TCU_Ethernet\STM32F417VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TCU_EthernetTest.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Jacky Lim\Downloads\2024Ethernet_TCU_WSB\TCU_Ethernet\STM32F417VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TCU_EthernetTest.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

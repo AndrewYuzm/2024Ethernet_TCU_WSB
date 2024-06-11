@@ -34,7 +34,7 @@
 #define LOCAL_PORT		2333
 
 int create_tcp_client(void);
-void tcp_client_send(int sock, const char *data);
+void tcp_client_send(int sock, const uint8_t *data, const uint32_t dataLen);
 void tcp_client_recv(int sock);
 
 void TCP_Client_Init(void);

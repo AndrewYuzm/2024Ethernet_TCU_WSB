@@ -1,9 +1,0 @@
-../Core/Src/tcpclinet.c:21:5:create_tcp_client	3
-../Core/Src/tcpclinet.c:46:6:tcp_client_send	1
-../Core/Src/tcpclinet.c:60:6:tcp_client_recv	1
-../Core/Src/tcpclinet.c:72:13:client_err	1
-../Core/Src/tcpclinet.c:89:14:client_send	1
-../Core/Src/tcpclinet.c:99:14:client_recv	3
-../Core/Src/tcpclinet.c:124:14:client_connected	1
-../Core/Src/tcpclinet.c:137:6:TCP_Client_Init	2
-../Core/Src/tcpclinet.c:166:6:send_json_data	2

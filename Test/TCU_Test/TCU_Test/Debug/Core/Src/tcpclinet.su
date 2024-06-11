@@ -1,9 +1,0 @@
-../Core/Src/tcpclinet.c:21:5:create_tcp_client	32	static
-../Core/Src/tcpclinet.c:46:6:tcp_client_send	24	static
-../Core/Src/tcpclinet.c:60:6:tcp_client_recv	536	static
-../Core/Src/tcpclinet.c:72:13:client_err	16	static
-../Core/Src/tcpclinet.c:89:14:client_send	64	static
-../Core/Src/tcpclinet.c:99:14:client_recv	24	static
-../Core/Src/tcpclinet.c:124:14:client_connected	24	static
-../Core/Src/tcpclinet.c:137:6:TCP_Client_Init	16	static
-../Core/Src/tcpclinet.c:166:6:send_json_data	24	static
